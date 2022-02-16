@@ -13,37 +13,7 @@
 #include "include/circuit_gen.h"
 
 int endogamy(const LenT *circuit, LenT N, LenT Depth, LenT Width, int j) {
-    if(Depth == 1) return 1;
-
-    LenT *values = malloc(sizeof(LenT) * ((Depth-1) * Width + N));
-    memset(values, 0, sizeof(LenT) * ((Depth-1) * Width + N));
-    
-    LenT p0_i = circuit[(Depth-1) * Width + j * 2];     // circuit[Depth-1][w][0]
-    LenT p1_i = circuit[(Depth-1) * Width + j * 2 + 1]; // circuit[Depth-1][w][1]
-    values[N + (Depth-2) * Width + p0_i] += 1;
-    values[N + (Depth-2) * Width + p1_i] += 1;
-
-    for (LenT d = Depth-2; d >=0; --d) {
-        for (LenT w = 0; w < Width; ++w) {
-            LenT v = values[N + d * Width + w];
-            p0_i = circuit[d * Width + w * 2];     // circuit[d][w][0]
-            p1_i = circuit[d * Width + w * 2 + 1]; // circuit[d][w][1]
-            if (d == 0) {
-                values[p0_i] += v;
-                values[p1_i] += v;
-            }
-            else {
-                values[N + (d-1) * Width + p0_i] += v;
-                values[N + (d-1) * Width + p1_i] += v; // (p0_i==p1_i) ? 0 : 
-            }
-        }
-    }
-    int ret = 0;
-    for (LenT w = 0; w < N; ++w) {
-        ret = ret > values[w] ? ret : values[w];
-    }
-    free(values);
-    return ret;
+    return 0;
 }
 
 int main() {
