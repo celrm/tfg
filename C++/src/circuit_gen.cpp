@@ -1,10 +1,4 @@
-#include <stdlib.h> // \n( )*\{
-#include <stdio.h>
-#define BitT char
-#define LenT char
-#define ExpT long long
-
-#include "../include/circuit_gen.h"
+#include "../include/utils.h"
 
 int print_circuit(const LenT *circuit, LenT N, LenT Depth, LenT Width) {
     for (LenT d = 0; d < Depth; ++d) {
@@ -13,10 +7,11 @@ int print_circuit(const LenT *circuit, LenT N, LenT Depth, LenT Width) {
         }
         printf("\n");
     }
+    return 0;
 }
 
 int random_circuit(LenT **circuit, LenT N, LenT Depth, LenT Width) {
-    LenT *c = malloc(sizeof(LenT) * (Depth * Width * 2));
+    LenT *c = (LenT*) malloc(sizeof(LenT) * (Depth * Width * 2));
     for (LenT d = 0; d < Depth; ++d) {
         for (LenT w = 0; w < Width; ++w) {
             int index = d * Width + w * 2;
@@ -25,6 +20,7 @@ int random_circuit(LenT **circuit, LenT N, LenT Depth, LenT Width) {
         }
     }
     *circuit = c;
+    return 0;
 }
 
 int evaluate_circuit(ExpT input, const LenT *circuit, LenT Depth, LenT Width, BitT *values) {
@@ -45,11 +41,12 @@ int evaluate_circuit(ExpT input, const LenT *circuit, LenT Depth, LenT Width, Bi
             values[d * Width + w] = 1 ^ (p0 & p1);
         }
     }
+    return 0;
 }
 
 int get_function(BitT **function, const LenT *circuit, LenT N, LenT Depth, LenT Width) {
-    BitT *f = malloc(sizeof(BitT) * (1 << N) * Width);
-    BitT *values = malloc(sizeof(BitT) * (Depth * Width));
+    BitT *f = (BitT *) malloc(sizeof(BitT) * (1 << N) * Width);
+    BitT *values = (BitT *) malloc(sizeof(BitT) * (Depth * Width));
 
     for (ExpT input = 0; input < (1 << N); ++input) { // all possible inputs 000-111
         evaluate_circuit(input, circuit, Depth, Width, values);
@@ -59,4 +56,5 @@ int get_function(BitT **function, const LenT *circuit, LenT N, LenT Depth, LenT 
     }
     free(values);
     *function = f;
+    return 0;
 }

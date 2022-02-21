@@ -1,8 +1,5 @@
 #ifndef CIRCUIT_GEN_H_
 #define CIRCUIT_GEN_H_
-#define BitT char
-#define LenT char
-#define ExpT long long
 
 int print_circuit(const LenT *circuit, LenT N, LenT Depth, LenT Width);
 

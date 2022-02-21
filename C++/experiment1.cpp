@@ -4,7 +4,7 @@
 #include <unistd.h>
 #include <stdio.h>
 
-#include "include/circuit_gen.h"
+#include "include/utils.h"
 
 int main() {
     srand(time(NULL));

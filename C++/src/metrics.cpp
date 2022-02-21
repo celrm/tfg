@@ -1,11 +1,4 @@
-#include <stdlib.h> // \n( )*\{
-#include <stdio.h>
-#include <limits.h>
-#define BitT char
-#define LenT char
-#define ExpT long long
-
-#include "../include/metrics.h"
+#include "../include/utils.h"
 
 BitT equal_string(const BitT *p1, const BitT *p2, LenT N) {
     for (ExpT i = 0; i < 1 << N; ++i)
@@ -37,7 +30,7 @@ int disorder_cube(const BitT *chain, LenT N) {
 
 int project(BitT **p1, BitT **p2, const BitT *chain, LenT N, LenT d) {
     ExpT Dnm = 1 << (N - 1);
-    BitT *pr1 = malloc(sizeof(BitT) * Dnm), *pr2 = malloc(sizeof(BitT) * Dnm);
+    BitT *pr1 = (BitT*) malloc(sizeof(BitT) * Dnm), *pr2 = (BitT*) malloc(sizeof(BitT) * Dnm);
 
     for (ExpT i = 0; i < 2 * Dnm; ++i) {
         // From i, takes bit in position d to the most significant (N-1)
@@ -49,4 +42,5 @@ int project(BitT **p1, BitT **p2, const BitT *chain, LenT N, LenT d) {
     }
     *p1 = pr1;
     *p2 = pr2;
+    return 0;
 }

@@ -5,12 +5,8 @@
 #include <stdio.h>
 #include <limits.h>
 #include <string.h>
-#define BitT char
-#define LenT char
-#define ExpT long long
 
-#include "include/metrics.h"
-#include "include/circuit_gen.h"
+#include "include/utils.h"
 
 int endogamy(const LenT *circuit, LenT N, LenT Depth, LenT Width, int j) {
     return 0;
