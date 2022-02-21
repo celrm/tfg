@@ -1,9 +1,8 @@
 #ifndef METRICS_H_
 #define METRICS_H_
 
-int disorder_cube(const BitT * chain, LenT N);
+int disorder_cube(FunctionT const &chain);
 
-int project(BitT ** p1, BitT ** p2, const BitT *chain, LenT N, LenT d);
-
+int project(FunctionT &p1, FunctionT &p2, FunctionT const &chain, LenT d);
 
 #endif // METRICS_H_

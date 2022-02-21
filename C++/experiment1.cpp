@@ -15,26 +15,23 @@ int main() {
     LenT N = 5; // 5 in 1 bit functions
     ExpT circuits_per_size = 1000;
     LenT max_size = 7;
-    LenT *circuit;
-    BitT *functions;
+    std::vector<FunctionT> functions(N, FunctionT(1 << N, 0));
 
     printf("size,function\n");
     for (LenT size = 3; size <= max_size; ++size) {
+        CircuitT circuit(size, std::vector<std::vector<LenT>>(size, std::vector<LenT>(2, 0)));
         for (ExpT i = 0; i < circuits_per_size; ++i) {
-            random_circuit(&circuit, N, size, size);
+            random_circuit(circuit, N);
             // print_circuit(circuit, N, size, size);
-            get_function(&functions, circuit, N, size, size);
+            get_functions(functions, circuit);
 
-            for(LenT j=0; j<size;++j) {
+            for (LenT j = 0; j < size; ++j) {
                 printf("%d,", size);
                 for (ExpT input = 0; input < (1 << N); ++input) {
-                    printf("%d", functions[j*(1 << N) + input]); // f[j][input]
+                    printf("%d", functions[j][input]);
                 }
                 printf("\n");
             }
-            
-            free(circuit);
-            free(functions);
         }
     }
 }

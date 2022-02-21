@@ -13,8 +13,8 @@
 #define BitT char
 #define LenT char
 #define ExpT long long
-#define CircuitT std::vector<std::vector<std::vector<LenT> > >
-#define MatrixT std::vector<std::vector<LenT> >
+#define CircuitT std::vector<std::vector<std::vector<LenT>>>
+#define MatrixT std::vector<std::vector<LenT>>
 #define FunctionT std::vector<BitT>
 
 #include "../include/metrics.h"
