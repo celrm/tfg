@@ -4,7 +4,7 @@
 #include <unistd.h>
 #include <stdio.h>
 
-#include "include/utils.h"
+#include "include/lib.h"
 
 int main() {
     srand(time(NULL));
@@ -13,13 +13,13 @@ int main() {
     dup2(fd, 1);
 
     LenT N = 5; // 5 in 1 bit functions
-    ExpT circuits_per_size = 1000;
+    ExpT circuits_per_size = 10000;
     LenT max_size = 7;
-    std::vector<FunctionT> functions(N, FunctionT(1 << N, 0));
 
-    printf("size,function\n");
+    printf("size,function,metric\n");
     for (LenT size = 3; size <= max_size; ++size) {
         CircuitT circuit(size, std::vector<std::vector<LenT>>(size, std::vector<LenT>(2, 0)));
+        std::vector<FunctionT> functions(size, FunctionT(1 << N, 0));
         for (ExpT i = 0; i < circuits_per_size; ++i) {
             random_circuit(circuit, N);
             // print_circuit(circuit, N, size, size);
@@ -30,6 +30,7 @@ int main() {
                 for (ExpT input = 0; input < (1 << N); ++input) {
                     printf("%d", functions[j][input]);
                 }
+                printf(",%d", disorder_cube(functions[j]));
                 printf("\n");
             }
         }

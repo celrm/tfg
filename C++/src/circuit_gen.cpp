@@ -1,4 +1,4 @@
-#include "../include/utils.h"
+#include "../include/lib.h"
 
 int print_circuit(CircuitT const &circuit) {
     for (LenT d = 0; d < circuit.size(); ++d) {

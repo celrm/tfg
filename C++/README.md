@@ -1,1 +1,1 @@
-`g++ -g main.cpp src/*.cpp -o main`
+`g++ -g main.cpp src/*.cpp -o main -O3`

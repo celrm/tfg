@@ -1,4 +1,4 @@
-#include "include/utils.h"
+#include "include/lib.h"
 
 int main() {
     srand(time(NULL));
