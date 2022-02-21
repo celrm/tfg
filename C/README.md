@@ -1,1 +1,0 @@
-`gcc -g main.c src/*.c -o main`
