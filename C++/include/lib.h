@@ -9,6 +9,10 @@
 #include <unistd.h>
 #include <string.h>
 #include <vector>
+#include <fstream>
+#include <sstream>
+#include <string>
+#include <iostream>
 
 #define BitT char
 #define LenT char
@@ -19,5 +23,6 @@
 
 #include "../include/metrics.h"
 #include "../include/circuit_gen.h"
+#include "../include/myutils.h"
 
 #endif // UTILS_H_
