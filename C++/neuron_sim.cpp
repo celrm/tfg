@@ -138,10 +138,10 @@ int main() {
     for (int i = 0; i < neurons_xors.size(); ++i)
         std::cout << ",x" << i;
     std::vector<V> neurons_radial = create_neurons_radial();
-    for (int i = 0; i < neurons_xors.size(); ++i)
+    for (int i = 0; i < neurons_radial.size(); ++i)
         std::cout << ",r" << i;
     std::vector<V> neurons_projections = create_neurons_projections();
-    for (int i = 0; i < neurons_xors.size(); ++i)
+    for (int i = 0; i < neurons_projections.size(); ++i)
         std::cout << ",p" << i;
     std::cout << "\n";
     
