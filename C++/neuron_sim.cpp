@@ -148,6 +148,8 @@ int main() {
     while (ifs.good()) {
         row = get_row(ifs);
         if (row.size() < 2) continue;
+        if(row[1] == "Small" || row[1] == "0") row[1] = "0";
+        else if(row[1] == "Big" || row[1] == "1") row[1] = "1";
         print_row(row, ",", ","); // bits
 
         result_xors = apply_things(row, neurons_xors, &apply_product);
