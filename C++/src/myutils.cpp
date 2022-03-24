@@ -23,21 +23,35 @@ std::vector<std::string> get_row(std::ifstream &ifs) {
     return result;
 }
 
-std::vector<std::pair<std::vector<int>, std::vector<int>>> combinations(int n, std::pair<int, int> const &n_s) {
+std::vector<std::vector<std::vector<int>>> combinations(int n, std::vector<int> const &n_s) {
     std::vector<int> v(n);
-    std::fill(v.end() - n_s.first, v.end(), 2);
-    std::fill(v.end() - n_s.first - n_s.second, v.end() - n_s.first, 1);
+    int count = 0;
+    for (size_t i = 0; i < n_s.size(); i++) {
+        std::fill(v.end() - n_s[i] - count, v.end() - count, n_s.size()-i);
+        count += n_s[i];
+    }
 
-    std::vector<std::pair<std::vector<int>, std::vector<int>>> result;
+    std::vector<std::vector<std::vector<int>>> result;
     do {
-        std::vector<int> first, second;
+        std::vector<std::vector<int>> combs(n_s.size());
         for (int i = 0; i < n; ++i) {
-            if (v[i] == 2)
-                first.push_back(i);
-            else if (v[i] == 1)
-                second.push_back(i);
+            if (v[i] != 0)
+                combs[n_s.size()-v[i]].push_back(i);
         }
-        result.push_back({first, second});
+        result.push_back(combs);
     } while (std::next_permutation(v.begin(), v.end()));
+    return result;
+}
+
+std::vector<std::vector<int>> negative_combinations(int (*neg)(int), std::vector<int> const &s) {
+    std::vector<std::vector<int>> result(1 << s.size(), std::vector<int>(s.size(), 0));
+    for (int i = 0; i < (1 << s.size()); ++i) {
+        for (int j = 0; j < s.size(); ++j) {
+            if (i & (1 << j)) // if bit j is 1 in i
+                result[i][j] = s[j];
+            else
+                result[i][j] = neg(s[j]); // negative
+        }
+    }
     return result;
 }
