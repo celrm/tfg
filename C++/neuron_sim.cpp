@@ -34,25 +34,25 @@ M create_neurons_xors() {
     M result;
     for (auto const &n_s : tuple_combinations) {
         for (auto const &pos_combs : combinations(5, n_s)) {
-            auto const and_combs = pos_combs[0];
             auto const xor_combs = pos_combs[1];
-            // for (auto const &and_combs : negative_combinations(&neg, pos_combs[0])) {
-            // for (auto const &xor_combs : negative_combinations(&neg, pos_combs[1])) {
+            for (auto const &and_combs : negative_combinations(&neg, pos_combs[0])) {
                 V layer(1 << N);
+                V neg_layer(1 << N); // single bifurcation of xor_combs here
                 for (size_t j = 0; j < (1 << N); ++j) {
-                    int ands = 1;
+                    int ands = 1; // neutral element
                     for (size_t i = 0; i < and_combs.size(); ++i)
                         ands &= c[and_combs[i]][j];
 
-                    int xors = c[xor_combs[0]][j]; // xors != 0
-                    for (size_t i = 1; i < xor_combs.size(); ++i)
+                    int xors = 0; // neutral element
+                    for (size_t i = 0; i < xor_combs.size(); ++i)
                         xors ^= c[xor_combs[i]][j];
 
                     layer[j] = (ands & xors) - (ands & (1 ^ xors));
+                    neg_layer[j] = (ands & (1 ^ xors)) - (ands & xors);
                 }
                 result.push_back(layer);
-            // }
-            // }
+                result.push_back(neg_layer);
+            }
         }
     }
     return result;
