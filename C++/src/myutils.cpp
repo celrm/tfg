@@ -1,12 +1,11 @@
 #include "../include/lib.h"
 
-int print_row(std::vector<std::string> const &row, std::string const &delim, std::string const &final) {
+int print_row(std::vector<std::string> const &row, std::string const &delim) {
     for (int i = 0; i < row.size(); ++i) {
         std::cout << row[i];
         if (i != row.size() - 1)
             std::cout << delim;
     }
-    std::cout << final;
     return 0;
 }
 

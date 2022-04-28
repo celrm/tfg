@@ -2,7 +2,7 @@
 #define MYUTILS_H_
 #include <algorithm>
 
-int print_row(std::vector<std::string> const &row, std::string const &delim = ",", std::string const &final = "\n");
+int print_row(std::vector<std::string> const &row, std::string const &delim = ",");
 
 std::vector<std::string> get_row(std::ifstream &ifs);
 

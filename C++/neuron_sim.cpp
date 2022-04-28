@@ -122,42 +122,69 @@ R apply_things(R const &row, M const &neurons, int (*func)(int, int)) {
     return result;
 }
 
-int main() {
-    R row, result_xors, result_radial, result_projections;
-    int fd = open("result.csv", O_WRONLY | O_TRUNC | O_CREAT, 0644);
+int main(int argc,  char** argv) {
+    if(argc != 4 || strlen(argv[3]) != 4) {
+        std::cout << "Usage: " << argv[0] << " <input_file> <output_file> <neuron_type(nxrp)>" << std::endl;
+        std::cout << "Example: " << argv[0] << " input.txt output.txt n-r-" << std::endl;
+        exit(EXIT_FAILURE);
+    }
+    bool is_n = argv[3][0] == 'n';
+    bool is_x = argv[3][1] == 'x';
+    bool is_r = argv[3][2] == 'r';
+    bool is_p = argv[3][3] == 'p';
+
+    R row;
+    M neurons_xors, neurons_radial, neurons_projections;
+    int fd = open(argv[2], O_WRONLY | O_TRUNC | O_CREAT, 0644); // "result.csv"
     dup2(fd, 1);
     init();
 
     std::ifstream ifs;
-    ifs.open("./bitsDataset.csv", std::ifstream::in); // be careful with size
+    ifs.open(argv[1], std::ifstream::in); // be careful with size // "./bitsDataset.csv"
 
     row = get_row(ifs); // header
-    print_row(row, ",", "");
+    if(is_n) print_row(row);
+    else print_row({row[0],row[1]});
 
-    M neurons_xors = create_neurons_xors();
-    for (int i = 0; i < neurons_xors.size(); ++i)
-        std::cout << ",x" << i;
-    M neurons_radial = create_neurons_radial();
-    for (int i = 0; i < neurons_radial.size(); ++i)
-        std::cout << ",r" << i;
-    M neurons_projections = create_neurons_projections();
-    for (int i = 0; i < neurons_projections.size(); ++i)
-        std::cout << ",p" << i;
-    std::cout << "\n";
+    if(is_x) {
+        neurons_xors = create_neurons_xors();
+        for (int i = 0; i < neurons_xors.size(); ++i)
+            std::cout << ",x" << i;
+    }
+    if(is_r) {
+        neurons_radial = create_neurons_radial();
+        for (int i = 0; i < neurons_radial.size(); ++i)
+            std::cout << ",r" << i;
+    }
+    if(is_p) {
+        neurons_projections = create_neurons_projections();
+        for (int i = 0; i < neurons_projections.size(); ++i)
+            std::cout << ",p" << i;
+    }
+    std::cout << std::endl;
 
     while (ifs.good()) {
         row = get_row(ifs);
         if (row.size() < 2) continue;
         if (row[1] == "Small" || row[1] == "0") row[1] = "0";
         else if (row[1] == "Big" || row[1] == "1") row[1] = "1";
-        print_row(row, ",", ","); // bits
 
-        result_xors = apply_things(row, neurons_xors, &apply_product);
-        print_row(result_xors, ",", ",");
-        result_radial = apply_things(row, neurons_radial, &apply_product);
-        print_row(result_radial, ",", ",");
-        result_projections = apply_things(row, neurons_projections, &apply_countbits);
-        print_row(result_projections);
+        if(is_n) print_row(row);
+        else print_row({row[0],row[1]});
+
+        if(is_x) {
+            std::cout << ",";
+            print_row(apply_things(row, neurons_xors, apply_product));
+        }
+        if(is_r) {
+            std::cout << ",";
+            print_row(apply_things(row, neurons_radial, apply_countbits));
+        }
+        if(is_p) {
+            std::cout << ",";
+            print_row(apply_things(row, neurons_projections, apply_countbits));
+        }
+        std::cout << std::endl;
     }
     ifs.close();
 }
