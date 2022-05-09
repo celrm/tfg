@@ -60,8 +60,8 @@ M create_neurons_xors() {
 
 M create_neurons_projections() {
     M result;
-    for (int i = 0; i < N; ++i) {
-        for (auto const &pos_combs : combinations(5, {i})) {
+    for (int w = 0; w < N; ++w) {
+        for (auto const &pos_combs : combinations(5, {w})) {
             for (auto const &combs : negative_combinations(&neg, pos_combs[0])) {
                 V layer(1 << N);
                 for (size_t j = 0; j < (1 << N); ++j) {
