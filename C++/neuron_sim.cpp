@@ -2,6 +2,7 @@
 #include <numeric>
 #include <execution>
 #include <unordered_map>
+#include <unordered_set>
 
 #define V std::vector<int>
 #define M std::vector<V>
@@ -30,14 +31,13 @@ static int init() {
 }
 
 M create_neurons_xors() {
-    const M tuple_combinations = {{1, 2}, {1, 3}, {1, 4}, {2, 2}, {2, 3}};
-    M result;
+    const M tuple_combinations = {{1, 2}, {1, 3}, {1, 4}, {2, 2}, {2, 3}}; // {0,3}, {2,1}, {0,2}
+    M result;                   // 17,     15,    5,       24,     26,         2,     1,     1
     for (auto const &n_s : tuple_combinations) {
         for (auto const &pos_combs : combinations(5, n_s)) {
             auto const xor_combs = pos_combs[1];
             for (auto const &and_combs : negative_combinations(&neg, pos_combs[0])) {
                 V layer(1 << N);
-                V neg_layer(1 << N); // single bifurcation of xor_combs here
                 for (size_t j = 0; j < (1 << N); ++j) {
                     int ands = 1; // neutral element
                     for (size_t i = 0; i < and_combs.size(); ++i)
@@ -48,10 +48,9 @@ M create_neurons_xors() {
                         xors ^= c[xor_combs[i]][j];
 
                     layer[j] = (ands & xors) - (ands & (1 ^ xors));
-                    neg_layer[j] = (ands & (1 ^ xors)) - (ands & xors);
+                    layer[j] *= (-1) ^ (result.size() % 2); // negate half the neurons
                 }
                 result.push_back(layer);
-                result.push_back(neg_layer);
             }
         }
     }
@@ -77,25 +76,38 @@ M create_neurons_projections() {
     return result;
 }
 
-M create_neurons_radial() {
+M get_adjacent(int c, int max_r) {
     M result;
-    for (size_t i = 0; i < (1 << N); ++i) {
+    result.push_back({c}); // radius 0 = center bit
+    std::unordered_set<int> taken; // no overwriting previous radii
+    taken.insert(c);
+    for (int r = 0; r < max_r-1; ++r) { // r is radius depth
+        V next_radius;
+        for (int j : result[r]) { // j is from previous circle
+            for (int d = 0; d < N; ++d) {
+                int k = j ^ (1 << d); // k is bit adjacent to j in direction d
+                if (taken.find(k) == taken.end()) {
+                    next_radius.push_back(k);
+                    taken.insert(k);
+                }
+            }
+        }
+        result.push_back(next_radius);
+    }
+    return result;
+}
+
+M create_neurons_radial() {
+    M result, adjacency;
+    V values = {4,-3,2,-1};
+    for (size_t c = 0; c < (1 << N); ++c) {
         V layer(1 << N, 0);
-
-        layer[i] = 4;
-
-        // distance 1
-        for (int d1 = 0; d1 < N; ++d1) {
-            int j = i ^ (1 << d1);
-            layer[j] = -2;
+        adjacency = get_adjacent(c, values.size());
+        for (size_t i = 0; i < values.size(); ++i) {
+            for (int j : adjacency[i]) {
+                layer[j] = values[i];
+            }
         }
-
-        // distance 2
-        for (int d2 = 0; d2 < N; ++d2) {
-            int j = i ^ (1 << d2);
-            layer[j] = 1;
-        }
-
         result.push_back(layer);
     }
     return result;
