@@ -1,5 +1,4 @@
 #include <unordered_map>
-#include <set>
 #include "../include/lib.h"
 
 template <typename T>
@@ -79,64 +78,46 @@ int disorder_CT(FunctionT const &chain) {
         return disorder_CT(p1) + disorder_CT(p2);
 }
 
-int apply_permutation(std::vector<int> const &perm, int i) {
-    int result = 0;
-    for (LenT j = 0; j < perm.size(); ++j) {
-        j *= 2;
-        j += (1 << j) & i;
-    }
-    return result;
-}
-
-int disorder_CT_equiv(FunctionT const &chain) {
-    LenT N = bit_width(chain.size());
-    int metric = INT_MAX;
-
-    std::vector<int> perm(N);
-    for (LenT i = 0; i < N; ++i)
-        perm[i] = i;
-
-    do { // N! permutations
-        FunctionT sigma_chain(chain.size(), 0);
-        for (ExpT i = 0; i < chain.size(); ++i) {
-            int j = apply_permutation(perm, i);
-            sigma_chain[i] = chain[j];
-        }
-        int m = disorder_CT(sigma_chain);
-        metric = m < metric ? m : metric;
-    } while (std::next_permutation(perm.begin(), perm.end()));
-    return metric;
-}
-
 ///////////////// Chunks ////////////////
-int chunks_k(int k, FunctionT const &chain) {
+
+int disorder_chunks_k(int k, FunctionT const &chain) {
     LenT N = bit_width(chain.size());
 
-    std::set<FunctionT> chunks;
+    std::unordered_map<ExpT,int> chunks;
     for (LenT i = 0; i < (1 << (N - k)); ++i) {
         FunctionT chunk((1 << k), 0);
-        chunk.assign(chain.begin() + i * (1 << k), chain.end() + (i + 1) * (1 << k));
-        chunks.insert(chunk);
+        chunk.assign(chain.begin() + i * (1 << k), chain.begin() + (i + 1) * (1 << k));
+        chunks[chain_to_num(chunk)] = 1;
     }
     return chunks.size();
 }
 
-int chunks_k_equiv(int k, FunctionT const &chain) {
+///////////////// All equivalent chains ////////////////
+
+int apply_permutation(std::vector<int> const &perm, LenT i) {
+    LenT result = 0;
+    for (LenT j = perm.size() - 1; j >= 0; --j) {
+        result *= 2;
+        result += ((1 << perm[j]) & i) > 0 ? 1 : 0;
+    }
+    return result;
+}
+
+std::vector<FunctionT> all_sigma_chains(FunctionT const &chain) {
+    std::vector<FunctionT> result;
     LenT N = bit_width(chain.size());
-    int metric = INT_MAX;
-
+    
     std::vector<int> perm(N);
-    for (LenT i = 0; i < N; ++i)
+    for (LenT i = 0; i < N; ++i) {
         perm[i] = i;
-
+    }
     do { // N! permutations
         FunctionT sigma_chain(chain.size(), 0);
         for (ExpT i = 0; i < chain.size(); ++i) {
             int j = apply_permutation(perm, i);
             sigma_chain[i] = chain[j];
         }
-        int m = chunks_k(k, sigma_chain);
-        metric = m < metric ? m : metric;
+        result.push_back(sigma_chain);
     } while (std::next_permutation(perm.begin(), perm.end()));
-    return metric;
+    return result;
 }
