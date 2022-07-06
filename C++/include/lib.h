@@ -22,6 +22,7 @@
 #define FunctionT std::vector<BitT>
 
 #include "../include/metrics.h"
+#include "../include/circuit_gen.h"
 #include "../include/myutils.h"
 
 #endif // UTILS_H_

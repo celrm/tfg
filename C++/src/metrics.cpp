@@ -1,5 +1,8 @@
 #include <unordered_map>
+#include <set>
 #include "../include/lib.h"
+#define V std::vector<int>
+#define M std::vector<V>
 
 template <typename T>
 int bit_width(T x) {
@@ -22,12 +25,10 @@ ExpT chain_to_num(FunctionT const &chain) {
 
 //////////////// Cube ////////////////
 
-int recursive_cube(std::unordered_map<ExpT, int> &used_beads, FunctionT const &chain) {
+int recursive_cube(FunctionT const &chain) {
     ExpT num = chain_to_num(chain);
-    if (used_beads.find(num) != used_beads.end())
-        return used_beads[num];
     if (chain.size() <= 1)
-        return used_beads[num] = 1;
+        return 1;
 
     FunctionT p1(chain.size() / 2, 0), p2(chain.size() / 2, 0);
     int m, metric = INT_MAX;
@@ -36,17 +37,16 @@ int recursive_cube(std::unordered_map<ExpT, int> &used_beads, FunctionT const &c
     for (LenT d = 0; d < N; ++d) {
         project(p1, p2, chain, d);
         if (p1 == p2)
-            m = recursive_cube(used_beads, p1);
+            m = recursive_cube(p1);
         else
-            m = recursive_cube(used_beads, p1) + recursive_cube(used_beads, p2);
+            m = recursive_cube(p1) + recursive_cube(p2);
         metric = m < metric ? m : metric;
     }
-    return used_beads[num] = metric;
+    return metric;
 }
 
 int disorder_cube(FunctionT const &chain) {
-    std::unordered_map<ExpT, int> used_beads;
-    return recursive_cube(used_beads, chain);
+    return recursive_cube(chain);
 }
 
 int project(FunctionT &p1, FunctionT &p2, FunctionT const &chain, LenT d) {
@@ -61,6 +61,60 @@ int project(FunctionT &p1, FunctionT &p2, FunctionT const &chain, LenT d) {
             p2[ni % p1.size()] = chain[i];
     }
     return 0;
+}
+
+
+int recursive_cube2(FunctionT const &chain, M & questions, std::set<LenT> & answers, int N, int len) {
+    ExpT num = chain_to_num(chain);
+    if (chain.size() <= 1)
+        return 1;
+
+    FunctionT p1(chain.size() / 2, 0), p2(chain.size() / 2, 0);
+    int m, metric = INT_MAX;
+
+    M this_layer_questions;
+    LenT final_d = -1;
+    for (LenT d = 0; d < N; ++d) {
+        if (answers.find(d) != answers.end())
+            continue;
+        auto it = answers.insert(d);
+        LenT pos = std::distance(answers.begin(), it.first);
+        project(p1, p2, chain, d-pos);
+        M new_questions = questions;
+        bool equal = p1 == p2;
+        if (equal)
+            m = recursive_cube2(p1, new_questions, answers, N,len);
+        else
+            m = recursive_cube2(p1, new_questions, answers, N,len/2) + 
+                recursive_cube2(p2, new_questions, answers, N,len/2);
+        answers.erase(d);
+        if (m < metric) {
+            metric = m;
+            this_layer_questions = new_questions;
+            if (!equal) {
+                final_d = d;
+            }
+            else {
+                final_d = -1;
+            }
+        }
+    }
+    if(final_d == -1) {
+        questions = this_layer_questions;
+    }
+    else {
+        questions = this_layer_questions;
+        questions[final_d].push_back(len);
+    }
+    return metric;
+}
+
+int disorder_cube2(FunctionT const &chain, M & questions) {
+    std::set<LenT> answers;
+
+    LenT N = bit_width(chain.size());
+    int metric = recursive_cube2(chain, questions, answers, N,1<<N);
+    return metric;
 }
 
 ///////////////// CT ////////////////
